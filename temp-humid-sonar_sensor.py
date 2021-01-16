@@ -45,7 +45,7 @@ def compute_distance(sound_velocity):
     t.sleep(0.00001) #0.01ms to set trigger to low
 
     GPIO.output(TRIG, False)
-    pulse_start = t.time()# are these required?
+    pulse_start = t.time()
     pulse_end = t.time()
 
     while GPIO.input(ECHO) == 0:
@@ -72,7 +72,7 @@ def temp_sensor():
         return [tempC, humidity]
     
     except RuntimeError as noreading:
-        # print("Temp Sensor reached RuntimeError")
+        print("Temp Sensor reached RuntimeError")
         return None
 
 def get_tempF(celsius_temp):
@@ -84,7 +84,6 @@ def display_values(header, row):
         print(label, row, "\t", end=" ")
 
 
-# dht_readings = temp_sensor()
 compromised_dht_reading = []
 
 while not compromised_dht_reading:
@@ -98,14 +97,14 @@ try:
     while True:      
         dht_readings = temp_sensor()
         if dht_readings is not None:
-          #  print("New DHT readings was succesful")
+            print("New DHT readings was succesful")
             compromised_dht_reading.pop()
                
         elif dht_readings is None:
-          #  print("New DHT readings was None")
+            print("New DHT readings was None")
             dht_readings = temp_sensor()
             if dht_readings is None:
-          #      print("Second attempt at dht reading is none. Continue in the loop with previous reading")
+                print("Second attempt at dht reading is none. Continue in the loop with previous reading")
                 dht_readings = compromised_dht_reading[0] # use previous reading
         
         vel_sound  = compute_sound_velocity(dht_readings[0], dht_readings[1])
@@ -122,15 +121,14 @@ try:
                             humidity_perc]
                         
         append_file(data_row_values) # update csvfile
-         # display_values(columns, data_row_values)
         if distance < 400:   
             print("Time: {0}     Distance: {1}cm.".format(full_date, distance))
         if compromised_dht_reading:
-            # print("Theres an extra Temp reading in COMP array. COMPDHT array poped")
+            print("Theres an extra Temp reading in COMP array. COMPDHT array poped")
             compromised_dht_reading.pop()
         
         compromised_dht_reading.append(dht_readings)
-        # print("End of writing data", compromised_dht_reading)    
+        print("End of writing data", compromised_dht_reading)    
         t.sleep(0.5) # allows a 0.5 second for the user to cancel the loop
         
 except KeyboardInterrupt:
